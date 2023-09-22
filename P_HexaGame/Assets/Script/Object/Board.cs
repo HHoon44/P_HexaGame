@@ -14,27 +14,19 @@ namespace P_HexaGame_Data
     public class Board : MonoBehaviour
     {
         [SerializeField]
-        private Vector3Int spawnPos = new Vector3Int(-1, 8, 0);     // 생성 위치 좌표
+        private Transform spawn_Pos;
 
-        [SerializeField]
-        private Tile[] tile;        // 사용할 타일
-
-        [SerializeField]
-        private Tilemap tilemap;    // 타일이 생성될 타일맵
-
-        /// <summary>
-        /// 현재 생성할 블럭
-        /// </summary>
-        public Block C_Block { get; private set; }
+        // Test
+        public GameObject block;
 
         private void Start()
         {
-            C_Block = GetComponentInChildren<Block>();
+
         }
 
         private void Update()
         {
-            // Test
+            // test
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Spawn();
@@ -46,12 +38,9 @@ namespace P_HexaGame_Data
         /// </summary>
         private void Spawn()
         {
-            for (int i = 0; i < C_Block.cellPos.Length; i++)
-            {
-                Vector3Int tilePos = (Vector3Int)C_Block.cellPos[i] + spawnPos;
-
-                tilemap.SetTile(tilePos, tile[Random.Range(0, tile.Length)]);
-            }
+            // test
+            Instantiate(block, spawn_Pos.position, Quaternion.identity);
+            block.SetActive(true);
         }
     }
 }
