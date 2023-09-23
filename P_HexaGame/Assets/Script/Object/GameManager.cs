@@ -7,11 +7,10 @@ using UnityEngine.UIElements;
 
 namespace P_HexaGame_Data
 {
-
     /// <summary>
-    /// 이녀석 약간 게임 매니저 같은 역할이네 ㅋㅋ
+    /// 게임 매니저
     /// </summary>
-    public class Board : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
         [SerializeField]
         private Transform spawn_Pos;
@@ -39,8 +38,9 @@ namespace P_HexaGame_Data
         private void Spawn()
         {
             // test
-            Instantiate(block, spawn_Pos.position, Quaternion.identity);
-            block.SetActive(true);
+            GameObject blockGroup = Instantiate(block, spawn_Pos.position, Quaternion.identity);
+            blockGroup.GetComponent<BlockGroup>().Initialize();
+            blockGroup.SetActive(true);
         }
     }
 }
