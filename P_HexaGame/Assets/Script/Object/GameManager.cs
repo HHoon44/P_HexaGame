@@ -1,3 +1,4 @@
+using P_HexaGame_Object;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
-namespace P_HexaGame_Data
+namespace P_HexaGame_Util
 {
     /// <summary>
     /// 게임 매니저
@@ -16,7 +17,7 @@ namespace P_HexaGame_Data
         private Transform spawn_Pos;
 
         // Test
-        public GameObject block;
+        public GameObject blockGroup;
 
         private void Start()
         {
@@ -38,9 +39,9 @@ namespace P_HexaGame_Data
         private void Spawn()
         {
             // test
-            GameObject blockGroup = Instantiate(block, spawn_Pos.position, Quaternion.identity);
-            blockGroup.GetComponent<BlockGroup>().Initialize();
-            blockGroup.SetActive(true);
+            GameObject protoGroup = Instantiate(blockGroup, spawn_Pos.position, Quaternion.identity);
+            protoGroup.GetComponent<BlockGroup>().Initialize();
+            protoGroup.SetActive(true);
         }
     }
 }
