@@ -68,11 +68,13 @@ namespace P_HexaGame_Object
 
             if (Input.GetKeyDown(KeyCode.A) && isTouch != TouchValue.Left)
             {
+                isTouch = TouchValue.None;
                 curDir = DirValue.Left;
                 Move(Vector2.left);
             }
             else if (Input.GetKeyDown(KeyCode.D) && isTouch != TouchValue.Right)
             {
+                isTouch = TouchValue.None;
                 curDir = DirValue.Right;
                 Move(Vector2.right);
             }
@@ -125,15 +127,14 @@ namespace P_HexaGame_Object
                     break;
             }
 
-            Debug.DrawRay(lastRayPos.position + (rayDir / 2), (Vector2)rayDir, Color.red);
+            Debug.DrawRay(lastRayPos.position + (rayDir / 1.5f), (Vector2)rayDir, Color.red);
 
             // 현재 블럭의 아래로 Ray를 발사하여 검사
             hit = Physics2D.Raycast
-                (lastRayPos.position + (rayDir / 2), (Vector2)rayDir, -1.5f, mask);
+                (lastRayPos.position + (rayDir / 1.5f), (Vector2)rayDir, -1.5f, mask);
 
             if (hit.collider != null)
             {
-                // 아래만 하지 않고 좌, 우도 확인해야함
                 switch (curDir)
                 {
                     case DirValue.Left:

@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 1468791405476008878}
   - component: {fileID: 1468791405476008879}
   m_Layer: 0
-  m_Name: ' Block_1'
+  m_Name: Block_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -302,12 +302,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb652a11f5ccd114f88347c5e9d4270e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTouch: 0
   blockSprites:
   - {fileID: 21300000, guid: 76331eeac1c16c549814902cc8e10274, type: 3}
   - {fileID: 21300000, guid: 6e3cf1403a9bddf449df12aaac46a708, type: 3}
   - {fileID: 21300000, guid: e58dc554e68b56a4985eec818ae068b9, type: 3}
   blocks: []
+  isTouch: 0
 --- !u!1 &1468791405526706029
 GameObject:
   m_ObjectHideFlags: 0
