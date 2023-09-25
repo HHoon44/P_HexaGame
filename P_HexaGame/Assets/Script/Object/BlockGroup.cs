@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using static P_HexaGame_Data.Data;
 
 namespace P_HexaGame_Object
@@ -11,8 +12,12 @@ namespace P_HexaGame_Object
     /// </summary>
     public class BlockGroup : MonoBehaviour
     {
-        //[SerializeField]
-        //private bool isTouch;                   // 벽 or 블럭에 닿았는지 체크
+        /// <summary>
+        /// 블럭에 닿은 오브젝트 
+        /// </summary>
+        public BorderData isBorder;
+
+        public DirData curDir { get; private set; }
 
         [SerializeField]
         private Sprite[] blockSprites;          // 블럭에 설정할 이미지
@@ -21,15 +26,10 @@ namespace P_HexaGame_Object
         private List<Transform> blocks;         // 자식 객체로 존재하는 블럭
 
         [SerializeField]
-        private TouchValue isTouch = TouchValue.None;
-
-        private Transform lastBlock;            // 블럭 그룹 중 마지막에 존재하는 블럭
-        private Transform lastRayPos;           // 마지막 블럭에 존재하는 Ray 포지션
+        private Transform rayPos;               // 레이 시작 지점
 
         private float stepTime;                 // 블럭 이동 시간
         private float stepDelay = 1f;           // 블럭 이동에 줄 딜레이 값
-
-        private DirValue curDir;                  // 현재 블럭의 방향
 
         /// <summary>
         /// 블럭 그룹 초기화 메서드
@@ -40,48 +40,50 @@ namespace P_HexaGame_Object
             // 자식 블럭들의 이미지를 설정
             for (int i = 0; i < transform.childCount; i++)
             {
-                blocks.Add(transform.GetChild(i));
-                blocks[i].gameObject.GetComponent<SpriteRenderer>().sprite = blockSprites[Random.Range(0, blockSprites.Length)];
+                if (i < transform.childCount - 1)
+                {
+                    blocks.Add(transform.GetChild(i));
+                    blocks[i].gameObject.GetComponent<SpriteRenderer>().sprite =
+                        blockSprites[Random.Range(0, blockSprites.Length)];
+                    blocks[i].GetComponent<Block>().Initialize();
+                }
+                else
+                {
+                    rayPos = transform.GetChild(i);
+                }
             }
-
-            // 맨 아래 블럭을 구하는 작업
-            GetLastChil();
-
-            // 블럭에 존재하는 Ray Pos 활성화
-            lastRayPos = lastBlock.transform.GetChild(0);
-            lastRayPos.gameObject.SetActive(true);
         }
 
         private void FixedUpdate()
         {
             // 아래에 블럭 or 벽이 있는지 체크
-            RayCheck();
+            DownCheck();
         }
 
         private void Update()
         {
-            if (isTouch == TouchValue.Down)
+            if (isBorder == BorderData.B_Border)
             {
                 // 이미 땅 or 블럭
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.A) && isTouch != TouchValue.Left)
+            if (Input.GetKeyDown(KeyCode.A) && isBorder != BorderData.L_Border)
             {
-                isTouch = TouchValue.None;
-                curDir = DirValue.Left;
+                isBorder = BorderData.None;
+                curDir = DirData.Left;
                 Move(Vector2.left);
             }
-            else if (Input.GetKeyDown(KeyCode.D) && isTouch != TouchValue.Right)
+            else if (Input.GetKeyDown(KeyCode.D) && isBorder != BorderData.R_Border)
             {
-                isTouch = TouchValue.None;
-                curDir = DirValue.Right;
+                isBorder = BorderData.None;
+                curDir = DirData.Right;
                 Move(Vector2.right);
             }
 
             if (Time.time >= stepTime)
             {
-                curDir = DirValue.Down;
+                curDir = DirData.Down;
                 Move(Vector2.down);
             }
         }
@@ -102,68 +104,22 @@ namespace P_HexaGame_Object
         }
 
         /// <summary>
-        /// 레이를 발사하여 좌, 우, 아래를 확인하는 메서드
+        /// 아래 레이 체크 메서드
         /// </summary>
-        private void RayCheck()
+        private void DownCheck()
         {
-            // Layer 번호
+            // 바닥 or 블럭을 체크
             int mask = 1 << 6 | 1 << 7;
-            RaycastHit2D hit;
-            Vector3 rayDir = Vector3.zero;
 
-            // 분기문으로 방향 설정
-            switch (curDir)
-            {
-                case DirValue.Left:
-                    rayDir = Vector3.left;
-                    break;
+            Debug.DrawRay(rayPos.position + (Vector3.down / 2), Vector2.down, Color.red);
 
-                case DirValue.Right:
-                    rayDir = Vector3.right;
-                    break;
-
-                case DirValue.Down:
-                    rayDir = Vector3.down;
-                    break;
-            }
-
-            Debug.DrawRay(lastRayPos.position + (rayDir / 1.5f), (Vector2)rayDir, Color.red);
-
-            // 현재 블럭의 아래로 Ray를 발사하여 검사
-            hit = Physics2D.Raycast
-                (lastRayPos.position + (rayDir / 1.5f), (Vector2)rayDir, -1.5f, mask);
+            RaycastHit2D hit =
+                Physics2D.Raycast(rayPos.position + (Vector3.down / 2), Vector2.down, .3f, mask);
 
             if (hit.collider != null)
             {
-                switch (curDir)
-                {
-                    case DirValue.Left:
-                        isTouch = TouchValue.Left;
-                        break;
-
-                    case DirValue.Right:
-                        isTouch = TouchValue.Right;
-                        break;
-
-                    case DirValue.Down:
-                        isTouch = TouchValue.Down;
-                        break;
-                }
+                isBorder = BorderData.B_Border;
             }
-        }
-
-        /// <summary>
-        /// 맨 아래 자식을 구하는 메서드
-        /// </summary>
-        private void GetLastChil()
-        {
-            if (transform.childCount <= 0)
-            {
-                return;
-            }
-
-            // 마지막 블럭을 저장
-            lastBlock = blocks[blocks.Count() - 1];
         }
     }
 }

@@ -14,14 +14,14 @@ namespace P_HexaGame_Data
             None, Blue, Cyan, Green, Orange, Purple, Red, Yellow
         }
 
-        public enum DirValue
+        public enum DirData
         { 
             None, Left, Right, Down
         }
 
-        public enum TouchValue
+        public enum BorderData
         { 
-            None, Left, Right, Down
+            None, L_Border, R_Border, B_Border
         }
 
         public static readonly Vector2Int[] cellData = 
