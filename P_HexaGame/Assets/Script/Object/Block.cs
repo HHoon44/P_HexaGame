@@ -18,6 +18,7 @@ namespace P_HexaGame_Object
 
         public void Initialize()
         {
+            // 자식으로 존재하는 Ray Pos를 저장
             B_rayPos = transform.GetChild(0);
             blockGroup = GetComponentInParent<BlockGroup>();
         }
@@ -38,9 +39,9 @@ namespace P_HexaGame_Object
             {
                 case DirData.Left:
                     // 왼쪽으로 레이 발사
-                    Debug.DrawRay(B_rayPos.position + (Vector3.left / 2f), Vector2.left, Color.red);
+                    Debug.DrawRay(B_rayPos.position + (Vector3.left / 1.5f), Vector2.left, Color.red);
                     hit = Physics2D.Raycast
-                        (B_rayPos.position + (Vector3.left / 2f), Vector2.left, 1f, LayerMask.GetMask("Border", "Block"));
+                        (B_rayPos.position + (Vector3.left / 1.5f), Vector2.left, .5f, LayerMask.GetMask("Border", "Block"));
 
                     if (hit.collider != null)
                     {

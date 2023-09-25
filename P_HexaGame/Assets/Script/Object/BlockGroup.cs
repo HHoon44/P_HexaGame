@@ -13,7 +13,7 @@ namespace P_HexaGame_Object
     public class BlockGroup : MonoBehaviour
     {
         /// <summary>
-        /// 블럭에 닿은 오브젝트 
+        /// 블럭에 닿은 오브젝트
         /// </summary>
         public BorderData isBorder;
 
@@ -43,8 +43,7 @@ namespace P_HexaGame_Object
                 if (i < transform.childCount - 1)
                 {
                     blocks.Add(transform.GetChild(i));
-                    blocks[i].gameObject.GetComponent<SpriteRenderer>().sprite =
-                        blockSprites[Random.Range(0, blockSprites.Length)];
+                    blocks[i].gameObject.GetComponent<SpriteRenderer>().sprite = blockSprites[Random.Range(0, blockSprites.Length)];
                     blocks[i].GetComponent<Block>().Initialize();
                 }
                 else
@@ -120,6 +119,11 @@ namespace P_HexaGame_Object
             {
                 isBorder = BorderData.B_Border;
             }
+        }
+
+        private void LineCheck()
+        {
+
         }
     }
 }
