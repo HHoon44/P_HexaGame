@@ -28,7 +28,7 @@ namespace P_HexaGame_Object
         private float stepDelay = 1f;           // 블럭 이동에 줄 딜레이 값
 
         [SerializeField]
-        protected bool isBottom;                // 바닥에 닿았는가에 대한 진리 값
+        public bool isBottom;                   // 바닥에 닿았는가에 대한 진리 값
 
         /// <summary>
         /// 블럭 그룹 초기화 메서드
@@ -116,7 +116,7 @@ namespace P_HexaGame_Object
         {
             Debug.DrawRay(rayPos.position + (Vector3.down / 2), Vector2.down, Color.red);
 
-            RaycastHit2D hit = Physics2D.Raycast(rayPos.position + (Vector3.down / 2), Vector2.down, .5f, LayerMask.GetMask("Border"));
+            RaycastHit2D hit = Physics2D.Raycast(rayPos.position + (Vector3.down / 2), Vector2.down, .2f, LayerMask.GetMask("Border"));
 
             if (hit.collider != null)
             {
