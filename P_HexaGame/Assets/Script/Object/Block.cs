@@ -1,11 +1,14 @@
 using P_HexaGame_Define;
+using P_HexaGame_Util;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace P_HexaGame_Object
 {
@@ -18,7 +21,7 @@ namespace P_HexaGame_Object
         [SerializeField]
         private Transform B_rayPos;
 
-        private BlockGroup blockGroup;
+        public BlockGroup blockGroup { get; private set; }
         private SpriteRenderer spriteRender;
 
         public void Initialize(Sprite sprite)
@@ -56,6 +59,7 @@ namespace P_HexaGame_Object
             {
                 // 바닥에 닿았다면 라인 체크
                 LineCheck();
+                // StartCoroutine(C_LineCheck());
             }
         }
 
@@ -110,34 +114,45 @@ namespace P_HexaGame_Object
                 RaycastHit2D leftHit = Physics2D.Raycast
                     (B_rayPos.position + new Vector3(-.6f, 0, 0), Vector2.left, .3f, LayerMask.GetMask("Block"));
 
-                // 왼쪽에 닿은 블럭이 있고 그 블럭의
-                // 블럭 그룹이 바닥에 닿은 상태일 때 실행
-                if (leftHit.collider != null && leftHit.collider.GetComponentInParent<BlockGroup>().isBottom)
-                {
-                    if (leftHit.collider.GetComponent<Block>().blockColor == blockColor)
-                    {
-                        Debug.Log("왼쪽의 색상은" + leftHit.collider.GetComponent<Block>().blockColor.ToString());
-                    }
-                }
-
                 // 오른쪽으로 레이를 발사하여 자신과 같은 블럭이 있는지 체크
                 Debug.DrawRay(B_rayPos.position + new Vector3(.6f, 0f, 0), Vector2.right, Color.red);
                 RaycastHit2D rightHit = Physics2D.Raycast
                     (B_rayPos.position + new Vector3(.6f, 0, 0), Vector2.right, .3f, LayerMask.GetMask("Block"));
 
-                if (rightHit.collider != null && rightHit.collider.GetComponentInParent<BlockGroup>().isBottom)
-                {
-                    if (rightHit.collider.GetComponent<Block>().blockColor == blockColor)
-                    {
-                        Debug.Log("오른쪽의 색상은" + rightHit.collider.GetComponent<Block>().blockColor.ToString());
-                    }
-                }
-
                 /**
                  *  왼쪽, 오른쪽 레이에 현재 블럭과 같은 블럭이 걸렸을 시
                  *  그 라인을 제거하는 작업을 진행
-                 */
+                 **/
+
+                if (leftHit.collider != null && rightHit.collider != null)
+                {
+                    var leftBlock = leftHit.collider?.GetComponent<Block>();
+                    var rightBlock = rightHit.collider?.GetComponent<Block>();
+
+                    // 닿은 블럭들이 현재 바닥에 닿은 상태인지 확인
+                    if (leftBlock.blockGroup.isBottom && rightBlock.blockGroup.isBottom)
+                    {
+                        // 닿은 블럭과 같은 색상인지 확인
+                        if ((leftBlock.blockColor == blockColor) && (rightBlock.blockColor == blockColor))
+                        {
+                            // 블럭 비활성화
+                            leftBlock.gameObject.SetActive(false);
+                            rightBlock.gameObject.SetActive(false);
+                            gameObject.SetActive(false);
+
+                            // 블럭 그룹 정리
+                            leftBlock.blockGroup.DeleteBlock(leftBlock);
+                            rightBlock.blockGroup.DeleteBlock(rightBlock);
+                            blockGroup.DeleteBlock(this);
+
+                            // 인 게임에 존재하는 블럭 정렬
+                            GameManager.Instance.BlockSort();
+                        }
+                    }
+                }
             }
         }
+
+
     }
 }
