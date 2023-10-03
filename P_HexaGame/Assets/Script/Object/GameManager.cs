@@ -1,11 +1,6 @@
 using P_HexaGame_Object;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 namespace P_HexaGame_Util
 {
@@ -58,7 +53,7 @@ namespace P_HexaGame_Util
                 {
                     // 접근하려는 블럭이 블럭 그룹의 마지막 블럭인지 체크
                     /// 자기 아래에 블럭이 없는 블럭만 움직이도록 설정해야하는데..
-                    if ((inBlockGroup[i].lastBlock == inBlockGroup[i].blocks[j]) && ())
+                    if ((inBlockGroup[i].lastBlock == inBlockGroup[i].blocks[j]))
                     {
                         // 아니라면 한칸 씩 내려준다
                         inBlockGroup[i].blocks[j].transform.position += new Vector3(0, -1f, 0);
